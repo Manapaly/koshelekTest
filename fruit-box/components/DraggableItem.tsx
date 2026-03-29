@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { BoxItem } from '@/data/items';
@@ -14,9 +15,10 @@ export default function DraggableItem({ item }: Props) {
     data: { item },
   });
 
-  const style = transform
-    ? { transform: CSS.Translate.toString(transform) }
-    : undefined;
+  const style: React.CSSProperties = {
+    touchAction: 'none',
+    ...(transform ? { transform: CSS.Translate.toString(transform) } : {}),
+  };
 
   return (
     <div

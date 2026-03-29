@@ -10,7 +10,7 @@ import SharePanel from '@/components/SharePanel';
 
 function BoxView() {
   const searchParams = useSearchParams();
-  const configParam = searchParams.get('config');
+  const configParam = searchParams.get('c') ?? searchParams.get('config');
 
   if (!configParam) {
     return (

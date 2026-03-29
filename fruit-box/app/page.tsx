@@ -1,108 +1,60 @@
 import Link from 'next/link';
 import { PRESETS } from '@/data/presets';
-import PresetCard from '@/components/PresetCard';
+import { encodeConfig } from '@/lib/boxConfig';
+import { getItemById } from '@/data/items';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <span className="text-lg font-bold tracking-tight">🍓 FruitBox</span>
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-8">
+      {/* Logo */}
+      <div className="mb-8 text-center">
+        <span className="text-2xl font-bold tracking-tight">🍓 FruitBox</span>
+      </div>
+
+      {/* 2×2 grid */}
+      <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
+        {PRESETS.slice(0, 3).map((preset) => {
+          const encoded = encodeConfig(preset.config);
+          const href = `/constructor?config=${encoded}`;
+
+          // Top 4 unique items for preview
+          const uniqueItems = [...new Set(Object.values(preset.config.cells))]
+            .map(getItemById)
+            .filter(Boolean)
+            .slice(0, 4);
+
+          return (
+            <Link
+              key={preset.id}
+              href={href}
+              className="group aspect-square flex flex-col items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white hover:border-black transition-all hover:shadow-sm p-4 text-center"
+            >
+              {/* Emoji grid preview — placeholder for future 3D photos */}
+              <div className="grid grid-cols-2 gap-1">
+                {uniqueItems.map((item) => item && (
+                  <span key={item.id} className="text-2xl leading-none">{item.emoji}</span>
+                ))}
+              </div>
+              <span className="text-xs font-semibold text-black mt-1">{preset.name}</span>
+              <span className="text-xs text-gray-400">Нажми чтобы собрать</span>
+            </Link>
+          );
+        })}
+
+        {/* 4th tile — build your own */}
         <Link
           href="/constructor"
-          className="text-sm font-medium border border-black rounded-full px-4 py-2 hover:bg-black hover:text-white transition-colors"
+          className="group aspect-square flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-black bg-black text-white transition-all hover:bg-gray-800 p-4 text-center"
         >
-          Собрать бокс
+          <span className="text-3xl">✦</span>
+          <span className="text-sm font-semibold leading-tight">Собрать<br />свой бокс</span>
         </Link>
-      </header>
+      </div>
 
-      <main className="max-w-3xl mx-auto px-4">
-        {/* Hero */}
-        <section className="py-16 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight tracking-tight mb-4">
-            Собери свой<br />фруктовый бокс
-          </h1>
-          <p className="text-gray-500 text-lg mb-8 max-w-md mx-auto">
-            Выбери фрукты, топпинги и размер. Мы доставим именно такой бокс, какой ты хочешь.
-          </p>
-          <Link
-            href="/constructor"
-            className="inline-flex items-center gap-2 bg-black text-white rounded-2xl px-8 py-4 text-base font-medium hover:bg-gray-800 transition-colors"
-          >
-            Собрать свой бокс →
-          </Link>
-        </section>
-
-        {/* Preset boxes */}
-        <section className="pb-16">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">Готовые боксы</h2>
-            <span className="text-sm text-gray-400">Нажми чтобы настроить</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {PRESETS.map((preset) => (
-              <PresetCard key={preset.id} preset={preset} />
-            ))}
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="pb-16 border-t border-gray-100 pt-12">
-          <h2 className="text-xl font-bold mb-8 text-center">Как это работает</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-            {[
-              { step: '01', emoji: '🎨', title: 'Собери бокс', desc: 'Выбери размер, фрукты и топпинги в конструкторе' },
-              { step: '02', emoji: '🔗', title: 'Получи ссылку', desc: 'Нажми «Открыть WhatsApp» или скопируй ссылку' },
-              { step: '03', emoji: '📦', title: 'Получи заказ', desc: 'Мы соберём твой бокс и доставим в удобное время' },
-            ].map(({ step, emoji, title, desc }) => (
-              <div key={step} className="flex flex-col items-center gap-3">
-                <span className="text-4xl">{emoji}</span>
-                <div>
-                  <div className="text-xs text-gray-400 font-medium mb-1">{step}</div>
-                  <div className="font-semibold">{title}</div>
-                  <div className="text-sm text-gray-500 mt-1">{desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Prices */}
-        <section className="pb-16 border-t border-gray-100 pt-12">
-          <h2 className="text-xl font-bold mb-6 text-center">Размеры и цены</h2>
-          <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto">
-            {([
-              { size: 'S', label: 'Маленький', rows: 2, price: 6000 },
-              { size: 'M', label: 'Средний',   rows: 4, price: 9000 },
-              { size: 'L', label: 'Большой',   rows: 6, price: 12000 },
-            ] as const).map(({ size, label, rows, price }) => (
-              <div key={size} className="flex flex-col items-center gap-2 p-4 border border-gray-200 rounded-2xl text-center">
-                <span className="text-2xl font-bold">{size}</span>
-                <span className="text-xs text-gray-500">{label}</span>
-                <span className="text-xs text-gray-400">{rows * 3} позиций</span>
-                <span className="text-sm font-semibold mt-1">
-                  {price.toLocaleString('ru-RU')}₸
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="pb-20 text-center">
-          <Link
-            href="/constructor"
-            className="inline-flex items-center gap-2 bg-black text-white rounded-2xl px-8 py-4 text-base font-medium hover:bg-gray-800 transition-colors"
-          >
-            Начать собирать →
-          </Link>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-100 px-6 py-6 text-center text-xs text-gray-400">
-        <p>FruitBox · Заказ через WhatsApp: +7 777 099 8231</p>
-      </footer>
+      {/* Subtle footer hint */}
+      <p className="mt-8 text-xs text-gray-400">
+        Заказ через WhatsApp · +7 777 099 8231
+      </p>
     </div>
   );
 }
