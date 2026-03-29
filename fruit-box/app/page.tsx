@@ -5,9 +5,9 @@ import { encodeConfig } from '@/lib/boxConfig';
 
 // Maps preset id → photo filename in /public
 const PRESET_PHOTOS: Record<string, string> = {
-  classic:     '/preset-classic.jpg',
-  exotic:      '/preset-exotic.jpg',
-  berries:     '/preset-berries.jpg',
+  classic:     '/B9C7361E-CAA2-43D2-BA97-E0514320E8AA.png',
+  exotic:      '/AF8B7C9A-9D76-4BEB-B53C-981F10F262EC.png',
+  berries:     '/DDCDC843-7052-413E-B6A1-81EA1F4A65CD.png',
 };
 
 export default function Home() {
