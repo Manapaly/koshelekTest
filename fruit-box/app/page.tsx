@@ -1,7 +1,14 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { PRESETS } from '@/data/presets';
 import { encodeConfig } from '@/lib/boxConfig';
-import { getItemById } from '@/data/items';
+
+// Maps preset id → photo filename in /public
+const PRESET_PHOTOS: Record<string, string> = {
+  classic:     '/preset-classic.jpg',
+  exotic:      '/preset-exotic.jpg',
+  berries:     '/preset-berries.jpg',
+};
 
 export default function Home() {
   return (
@@ -9,28 +16,31 @@ export default function Home() {
       {/* Logo */}
       <span className="text-xl font-bold tracking-tight">🍓 FruitBox</span>
 
-      {/* 2×2 grid of fixed-size squares */}
+      {/* 2×2 grid */}
       <div className="grid grid-cols-2 gap-3" style={{ width: 'min(340px, 90vw)' }}>
         {PRESETS.slice(0, 3).map((preset) => {
           const encoded = encodeConfig(preset.config);
-          const uniqueItems = [...new Set(Object.values(preset.config.cells))]
-            .map(getItemById)
-            .filter(Boolean)
-            .slice(0, 4);
+          const photo = PRESET_PHOTOS[preset.id];
 
           return (
             <Link
               key={preset.id}
               href={`/constructor?config=${encoded}`}
               style={{ width: 'min(160px, 43vw)', height: 'min(160px, 43vw)' }}
-              className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white hover:border-black transition-all p-4 text-center"
+              className="group relative overflow-hidden rounded-2xl border border-gray-200 hover:border-black transition-all"
             >
-              <div className="grid grid-cols-2 gap-1">
-                {uniqueItems.map((item) => item && (
-                  <span key={item.id} className="text-xl leading-none">{item.emoji}</span>
-                ))}
+              {/* Photo */}
+              <Image
+                src={photo}
+                alt={preset.name}
+                fill
+                className="object-cover"
+                sizes="160px"
+              />
+              {/* Label overlay */}
+              <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm px-2 py-1.5 text-center">
+                <span className="text-xs font-semibold">{preset.name}</span>
               </div>
-              <span className="text-xs font-semibold">{preset.name}</span>
             </Link>
           );
         })}
