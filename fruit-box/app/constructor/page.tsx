@@ -97,7 +97,6 @@ function Constructor() {
   }, []);
 
   const config: BoxConfig = { size, cells };
-  const filledCount = Object.keys(cells).length;
 
   return (
     <div className="min-h-screen bg-white">
@@ -165,15 +164,13 @@ function Constructor() {
             />
           </section>
 
-          {/* Step 4: Order */}
-          {filledCount > 0 && (
-            <section>
-              <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
-                Шаг 4 — Оформить заказ
-              </h2>
-              <SharePanel config={config} />
-            </section>
-          )}
+          {/* Step 4: Order — always visible */}
+          <section>
+            <h2 className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-3">
+              Шаг 4 — Оформить заказ
+            </h2>
+            <SharePanel config={config} />
+          </section>
 
           <div className="h-8" />
         </div>
